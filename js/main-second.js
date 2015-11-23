@@ -36,36 +36,106 @@ function getSizes(){
 
 sizesArr = getSizes();
 
-sizesArr.forEach(function(item, i){
-    var start = i === 0 && item.start> 0 ? 0 : sizesArr[i-1].start,
+function getHorizontalRanges(data){
+    var res = [];
+
+    data.forEach(function(item){
+        res.push(parseFloat(item.start, 10), parseFloat(item.start + item.width, 10));
+    });
+
+    if(res.indexOf(0) < 0){
+        res.unshift(0);
+    }
+    if(res.indexOf(widthScreen) < 0){
+        res.push(widthScreen);
+    }
+
+    return res.sort(function(a, b){
+        return a > b ? 1 : -1;
+    });
+}
+
+function getVerticalRanges(data){
+    var res = [];
+
+    data.forEach(function(item){
+        res.push(parseFloat(item.top, 10), parseFloat(item.top + item.height, 10));
+    });
+
+    if(res.indexOf(0) < 0){
+        res.unshift(0);
+    }
+    if(res.indexOf(heightScreen) < 0){
+        res.push(heightScreen);
+    }
+
+    return res;
+}
+
+var horizontalRanges = getHorizontalRanges(sizesArr);
+var items;
+var verticalRanges;
+
+for(var i = 0; i < horizontalRanges.length; i++){
+    items = getItems(horizontalRanges[i], horizontalRanges[i+1]);
+    if(items.length > 0){
+        verticalRanges = getVerticalRanges(items);
+        for(var j = 0; j < verticalRanges.length;){
+            if(verticalRanges[j] > verticalRanges[j+2]) {
+                verticalRanges.splice(j+1, 2);
+            } else if(verticalRanges[j] > verticalRanges[j+1]){
+                verticalRanges.splice(j, 2);
+            } else {
+                var createOverlay = $('<div></div>');
+                $(createOverlay).addClass('part-overlay');
+                $(createOverlay).css({
+                    'left': horizontalRanges[i],
+                    'width': horizontalRanges[i+1] - horizontalRanges[i],
+                    'top': verticalRanges[j],
+                    'height': verticalRanges[j+1] - verticalRanges[j]
+                });
+                $('body').append(createOverlay);
+                j+=2;
+            }
+        }
+    } else {
+        createItem(horizontalRanges[i], horizontalRanges[i+1]);
+    }
+
+    //console.log(horizontalRanges[i], horizontalRanges[i+1]);
+}
+
+/*sizesArr.forEach(function(item, i){
+    var start = i === 0 && item.start > 0 ? 0 : sizesArr[i-1].start,
         end = item.start,
         items = getItems(start, end);
-    console.log();
+    console.log(start, end);
     if(items.length > 0){
         fillByVertical(items, start, end);
     } else{
         createItem(start,end);
     }
-});
+});*/
 
 function getItems(start, end){
     return sizesArr.filter(function(item){
+        //console.log(item,end, start);
         return item.end >= end && item.start <= start;
     }).sort(function(a, b){
        return a.top > b.top;
     });
 }
 
-function fillByVertical(items, start, end){
+/*function fillByVertical(items, start, end){
     var arr = [];
-
     items[0].top !== 0 && (arr[0] = 0);
 
-    //console.log(items);
     items.forEach(function(item){
        arr.push(item.top);
         arr.push(item.top + item.height);
     });
+
+    //console.log(arr);
     arr.indexOf(heightScreen) < 0 && arr.push(heightScreen);
     for(var i = 0; i < arr.length; i += 2){
         //console.log(arr[i], arr[i+1]);
@@ -74,13 +144,12 @@ function fillByVertical(items, start, end){
         (createOverlay).css({'left': start, 'width': end - start, 'top': arr[i], 'height': arr[i+1] - arr[i]});
         $('body').append(createOverlay);
     }
-}
+}*/
 
 function createItem(start,end){
-    console.log(start, end);
     var createOverlay = $('<div></div>');
     $(createOverlay).addClass('part-overlay');
-    $(createOverlay).css({'left': start, 'width': end - start, 'height': heightScreen});
+    $(createOverlay).css({'left': start, 'width': end - start, height: heightScreen});
     $('body').append(createOverlay);
 }
 
