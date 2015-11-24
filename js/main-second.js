@@ -86,36 +86,14 @@ for(var i = 0; i < horizontalRanges.length; i++){
             } else if(verticalRanges[j] > verticalRanges[j+1]){
                 verticalRanges.splice(j, 2);
             } else {
-                var createOverlay = $('<div></div>');
-                $(createOverlay).addClass('part-overlay');
-                $(createOverlay).css({
-                    'left': horizontalRanges[i],
-                    'width': horizontalRanges[i+1] - horizontalRanges[i],
-                    'top': verticalRanges[j],
-                    'height': verticalRanges[j+1] - verticalRanges[j]
-                });
-                $('body').append(createOverlay);
+                createItem(horizontalRanges[i], horizontalRanges[i+1], verticalRanges[j], verticalRanges[j+1]);
                 j+=2;
             }
         }
     } else {
         createItem(horizontalRanges[i], horizontalRanges[i+1]);
     }
-
-    //console.log(horizontalRanges[i], horizontalRanges[i+1]);
 }
-
-/*sizesArr.forEach(function(item, i){
-    var start = i === 0 && item.start > 0 ? 0 : sizesArr[i-1].start,
-        end = item.start,
-        items = getItems(start, end);
-    console.log(start, end);
-    if(items.length > 0){
-        fillByVertical(items, start, end);
-    } else{
-        createItem(start,end);
-    }
-});*/
 
 function getItems(start, end){
     return sizesArr.filter(function(item){
@@ -125,6 +103,30 @@ function getItems(start, end){
        return a.top > b.top;
     });
 }
+
+function createItem(start,end, top, bottom){
+    var createOverlay = $('<div></div>');
+    $(createOverlay).addClass('part-overlay');
+    $(createOverlay).css({
+        'left': start,
+        'width': end - start,
+        'top': top,
+        'height': bottom - top });
+    $('body').append(createOverlay);
+}
+
+/*sizesArr.forEach(function(item, i){
+    var start = i === 0 && item.start > 0 ? 0 : sizesArr[i-1].start,
+    end = item.start,
+    items = getItems(start, end);
+    console.log(start, end);
+        if(items.length > 0){
+            fillByVertical(items, start, end);
+        } else{
+            createItem(start,end);
+        }
+});*/
+
 
 /*function fillByVertical(items, start, end){
     var arr = [];
@@ -146,12 +148,7 @@ function getItems(start, end){
     }
 }*/
 
-function createItem(start,end){
-    var createOverlay = $('<div></div>');
-    $(createOverlay).addClass('part-overlay');
-    $(createOverlay).css({'left': start, 'width': end - start, height: heightScreen});
-    $('body').append(createOverlay);
-}
+
 
 
 
