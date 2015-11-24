@@ -78,7 +78,7 @@ var verticalRanges;
 
 for(var i = 0; i < horizontalRanges.length; i++){
     items = getItems(horizontalRanges[i], horizontalRanges[i+1]);
-    if(items.length > 0){
+    if(items.length){
         verticalRanges = getVerticalRanges(items);
         for(var j = 0; j < verticalRanges.length;){
             if(verticalRanges[j] > verticalRanges[j+2]) {
@@ -111,7 +111,8 @@ function createItem(start,end, top, bottom){
         'left': start,
         'width': end - start,
         'top': top,
-        'height': bottom - top });
+        'height': bottom - top
+    });
     $('body').append(createOverlay);
 }
 
